@@ -1,4 +1,5 @@
 import mysql.connector
+import csv
 
 '''pip install mysql-connector-python'''
 conn = mysql.connector.connect(
@@ -12,18 +13,20 @@ cursor.execute('SELECT * FROM interview')
 
 results = cursor.fetchall()
 
+rows =[['sin','insertion_datetime','date','time','open','high','low','close','volume','open_interest']]
 
-for c in results:
+for i,c in enumerate(results):
     (isin,insertion_datetime,datetime,open_,high,low,close,volume,open_interest) = c
-    print('isin',isin)
-    print('insertion_datetime',insertion_datetime)
-    print('datetime',datetime)
-    print('open',open_)
-    print('high',high)
-    print('low',low)
-    print('close',close)
-    print('volume',volume)
-    print('open_interest',open_interest)
-    break;
-    
+    (date , time) = str(datetime).split(' ')
+    if(i%1000 == 0):
+        print('written {} rows'.format(i))
+    rows.append([isin,insertion_datetime,date,time,open_,high,low,close,volume,open_interest])
+
+
+with open('stocks.csv','w') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerows(rows)
+
+csvfile.close()
+
 print(conn)
